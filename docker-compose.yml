@@ -1,0 +1,35 @@
+version: "3.9"
+services:
+  portainer:
+    container_name: portainer
+    image: portainer/portainer
+    command: -H unix:///var/run/docker.sock
+    restart: always
+    ports:
+      - 9000:9000
+      - 8000:8000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+
+  dozzle:
+    environment: 
+      #username, password and key environment variables adds basic auth to dozzle ui
+      #overriden by environment variables
+      - DOZZLE_USERNAME=${DOZZLE_USERNAME:-user}
+      - DOZZLE_PASSWORD=${DOZZLE_PASSWORD:-password}
+      - DOZZLE_KEY=${DOZZLE_KEY:-key}
+    container_name: dozzle
+    image: amir20/dozzle:latest
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    #local setup
+    #dozzle container runs on port 8080
+    #dozzle container exposing port 88
+    #dozzle container overrides DOZZLE_PORT and DOZZLE_PORT_CONTAINER when deployed      
+    ports:
+      - ${DOZZLE_PORT:-88}:${DOZZLE_PORT_CONTAINER:-8080}
+
+volumes:
+  portainer_data: {}
