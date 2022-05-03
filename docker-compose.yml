@@ -29,7 +29,18 @@ services:
     #dozzle container exposing port 88
     #dozzle container overrides DOZZLE_PORT and DOZZLE_PORT_CONTAINER when deployed      
     ports:
-      - ${DOZZLE_PORT:-88}:${DOZZLE_PORT_CONTAINER:-8080}
+      - ${DOZZLE_PORT:-8888}:${DOZZLE_PORT_CONTAINER:-8080}
+
+  watchtower:
+    image: containrrr/watchtower:1.4.0
+    container_name: watchtower
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - ${WATCHTOWER_PORT:-8887}:${WATCHTOWER_PORT_CONTAINER:-8080}
 
 volumes:
   portainer_data: {}
