@@ -2,7 +2,7 @@ version: "3.9"
 services:
   portainer:
     container_name: portainer
-    image: portainer/portainer
+    image: portainer/portainer:1.24.2
     command: -H unix:///var/run/docker.sock
     restart: always
     ports:
@@ -41,6 +41,20 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - ${WATCHTOWER_PORT:-8887}:${WATCHTOWER_PORT_CONTAINER:-8080}
+
+  heimdall:
+    image: linuxserver/heimdall:2.4.12
+    container_name: heimdall
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /var/docker/heimdall/config:/config
+    ports:
+      - 8885:80
+    environment:
+      - PGID=1000
+      - PUID=1000
 
 volumes:
   portainer_data: {}
